@@ -13,8 +13,8 @@ describe("Marker", function () {
 		map = L.map(div).setView([0, 0], 0);
 		icon1 = new L.Icon.Default();
 		icon2 = new L.Icon.Default({
-			iconUrl: icon1._getIconUrl('icon') + '?2',
-			shadowUrl: icon1._getIconUrl('shadow') + '?2'
+			iconUrl: icon1.options.iconUrl + '?2',
+			shadowUrl: icon1.options.shadowUrl + '?2'
 		});
 	});
 
@@ -28,7 +28,7 @@ describe("Marker", function () {
 			var expectedX = 96;
 			var expectedY = 100;
 			var sizedIcon = new L.Icon.Default({
-				iconUrl: icon1._getIconUrl('icon') + '?3',
+				iconUrl: icon1.options.iconUrl + '?3',
 				iconSize: [expectedX, expectedY]
 			});
 
@@ -44,7 +44,7 @@ describe("Marker", function () {
 		it("set the correct x and y size attributes passing only one value", function () {
 			var expectedXY = 96;
 			var sizedIcon = new L.Icon.Default({
-				iconUrl: icon1._getIconUrl('icon') + '?3',
+				iconUrl: icon1.options.iconUrl + '?3',
 				iconSize: expectedXY
 			});
 
@@ -60,7 +60,7 @@ describe("Marker", function () {
 		it("set the correct x and y size attributes passing a L.Point instance", function () {
 			var expectedXY = 96;
 			var sizedIcon = new L.Icon.Default({
-				iconUrl: icon1._getIconUrl('icon') + '?3',
+				iconUrl: icon1.options.iconUrl + '?3',
 				iconSize: L.point(expectedXY, expectedXY)
 			});
 
@@ -108,8 +108,18 @@ describe("Marker", function () {
 			map.removeLayer(marker);
 			// Dragging is still enabled, we should be able to disable it,
 			// even if marker is off the map.
-			marker.dragging.disable();
+			expect(marker.dragging).to.be(undefined);
+			marker.options.draggable = false;
 			map.addLayer(marker);
+
+			map.removeLayer(marker);
+
+			// We should also be able to enable dragging while off the map
+			expect(marker.dragging).to.be(undefined);
+			marker.options.draggable = true;
+
+			map.addLayer(marker);
+			expect(marker.dragging.enabled()).to.be(true);
 		});
 
 		it("changes the icon to another DivIcon", function () {
